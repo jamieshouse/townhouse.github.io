@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Storybook</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url("images/library.jpg") no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      font-family: 'Quicksand', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .book {
+      width: 80%;
+      max-width: 900px;
+      height: 500px;
+      display: flex;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      background: #fdfaf3;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .page {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      transition: transform 0.6s ease;
+    }
+
+    .page h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .page p {
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    .nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      background-color: rgba(255,255,255,0.6);
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem 1rem;
+    }
+
+    #prev {
+      left: 0;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+
+    #next {
+      right: 0;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+
+    #add-page {
+      background-color: #bfa98f;
+      color: white;
+      font-size: 1rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="book">
+    <button id="prev" class="nav">⟵</button>
+    <div id="page" class="page">
+      <h2>Welcome to the Library</h2>
+      <p>This room holds your stories, secrets, and moments. Click the arrows to turn the pages and add your own chapters.</p>
+    </div>
+    <button id="next" class="nav">⟶</button>
+  </div>
+  <button id="add-page">Add New Page</button>
+
+  <script>
+    const savedPages = localStorage.getItem("storybookPages");
+    const pages = savedPages ? JSON.parse(savedPages) : [
+      `<h2>Welcome to the Library</h2><p>This room holds your stories, secrets, and moments. Click the arrows to turn the pages and add your own chapters.</p>`,
+      `<h2>Entry One</h2><p>This is a quiet moment. A cup of tea, a rainy afternoon, and the scent of paper fills the air.</p>`,
+      `<h2>Entry Two</h2><p>A forgotten photograph tucked between the pages of an old book, rediscovered with a smile.</p>`
+    ];
+
+    let currentPage = 0;
+    const pageDiv = document.getElementById("page");
+
+    function renderPage() {
+      pageDiv.innerHTML = pages[currentPage];
+    }
+
+    function savePages() {
+      localStorage.setItem("storybookPages", JSON.stringify(pages));
+    }
+
+    document.getElementById("next").addEventListener("click", () => {
+      if (currentPage < pages.length - 1) {
+        currentPage++;
+        renderPage();
+      }
+    });
+
+    document.getElementById("prev").addEventListener("click", () => {
+      if (currentPage > 0) {
+        currentPage--;
+        renderPage();
+      }
+    });
+
+    document.getElementById("add-page").addEventListener("click", () => {
+      const title = prompt("Enter a title for your new page:");
+      const text = prompt("Enter the content for your new page:");
+      if (title && text) {
+        pages.push(`<h2>${title}</h2><p>${text}</p>`);
+        currentPage = pages.length - 1;
+        renderPage();
+        savePages();
+      }
+    });
+
+    renderPage();
+  </script>
+</body>
+</html>
